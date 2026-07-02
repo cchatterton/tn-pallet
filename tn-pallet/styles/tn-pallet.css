@@ -1,0 +1,35 @@
+.tnp-admin .tnp-status {
+    margin: 16px 0;
+}
+
+.tnp-palette-table th,
+.tnp-palette-table td {
+    vertical-align: middle;
+}
+
+.tnp-order {
+    white-space: nowrap;
+}
+
+.tnp-order .button {
+    min-width: 32px;
+}
+
+.tnp-preview {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
+.tnp-regenerate-form {
+    margin-top: 16px;
+}
+
+@media screen and (max-width: 782px) {
+    .tnp-palette-table input.regular-text {
+        width: 100%;
+    }
+}
