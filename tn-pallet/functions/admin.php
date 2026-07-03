@@ -148,20 +148,11 @@ function tnp_render_admin_page(): void
             <?php wp_nonce_field('tnp_save_palette'); ?>
             <input type="hidden" name="action" value="tnp_save_palette">
 
-            <table class="widefat striped tnp-palette-table">
-                <thead>
-                    <tr>
-                        <th scope="col"><?php echo esc_html__('Name', 'tn-pallet'); ?></th>
-                        <th scope="col"><?php echo esc_html__('Colour picker', 'tn-pallet'); ?></th>
-                        <th scope="col"><?php echo esc_html__('Actions', 'tn-pallet'); ?></th>
-                    </tr>
-                </thead>
-                <tbody id="tnp-palette-rows">
-                    <?php foreach ($palette as $colour) : ?>
-                        <?php tnp_render_palette_row($colour); ?>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+            <div id="tnp-palette-rows" class="tnp-palette-grid">
+                <?php foreach ($palette as $colour) : ?>
+                    <?php tnp_render_palette_row($colour); ?>
+                <?php endforeach; ?>
+            </div>
 
             <p>
                 <button type="button" class="button" id="tnp-add-colour"><?php echo esc_html__('Add Colour', 'tn-pallet'); ?></button>
@@ -175,7 +166,7 @@ function tnp_render_admin_page(): void
             <?php submit_button(__('Regenerate CSS', 'tn-pallet'), 'secondary', 'submit', false); ?>
         </form>
 
-        <script type="text/html" id="tmpl-tnp-palette-row">
+        <script type="text/html" id="tmpl-tnp-palette-card">
             <?php tnp_render_palette_row(array('name' => '', 'hex' => '#000000', 'rgb' => '0 0 0')); ?>
         </script>
     </div>
@@ -187,19 +178,19 @@ function tnp_render_palette_row(array $colour): void
     $name = isset($colour['name']) ? (string) $colour['name'] : '';
     $hex = isset($colour['hex']) ? (string) $colour['hex'] : '#000000';
     ?>
-    <tr class="tnp-palette-row">
-        <td>
-            <label class="screen-reader-text"><?php echo esc_html__('Colour name', 'tn-pallet'); ?></label>
-            <input type="text" name="tnp_name[]" value="<?php echo esc_attr($name); ?>" pattern="[a-z][a-z0-9-]*" class="regular-text" required>
-        </td>
-        <td>
-            <label class="screen-reader-text"><?php echo esc_html__('Colour picker', 'tn-pallet'); ?></label>
-            <input type="text" name="tnp_picker[]" value="<?php echo esc_attr($hex); ?>" class="tnp-colour-picker">
-        </td>
-        <td>
-            <button type="button" class="button-link-delete tnp-remove-colour"><?php echo esc_html__('Remove', 'tn-pallet'); ?></button>
-        </td>
-    </tr>
+    <div class="tnp-palette-card">
+        <div class="tnp-card-header">
+            <label>
+                <span class="screen-reader-text"><?php echo esc_html__('Colour name', 'tn-pallet'); ?></span>
+                <input type="text" name="tnp_name[]" value="<?php echo esc_attr($name); ?>" pattern="[a-z][a-z0-9-]*" class="tnp-colour-name" required>
+            </label>
+            <button type="button" class="button-link-delete tnp-remove-colour" aria-label="<?php echo esc_attr__('Remove colour', 'tn-pallet'); ?>">
+                <span class="dashicons dashicons-trash" aria-hidden="true"></span>
+            </button>
+        </div>
+        <label class="screen-reader-text"><?php echo esc_html__('Colour picker', 'tn-pallet'); ?></label>
+        <input type="text" name="tnp_picker[]" value="<?php echo esc_attr($hex); ?>" class="tnp-colour-picker">
+    </div>
     <?php
 }
 

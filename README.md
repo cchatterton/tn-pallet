@@ -34,5 +34,5 @@ The build writes `dist/tn-pallet.zip` and copies the same package to `tn-pallet.
 - Run syntax checks.
 - Run `scripts/build-plugin-zip.sh`.
 - Verify the ZIP contains `tn-pallet/tn-pallet.php` as the top-level plugin file.
-- Create a GitHub release tag matching the plugin version, such as `v0.1.2`.
+- Create a GitHub release tag matching the plugin version, such as `v0.1.3`.
 - Attach `tn-pallet.zip` to the release.

@@ -40,10 +40,11 @@ function tnp_enqueue_admin_assets(string $hook_suffix): void
     }
 
     wp_enqueue_style('wp-color-picker');
+    wp_enqueue_style('dashicons');
     wp_enqueue_style(
         'tnp-admin',
         TNP_PLUGIN_URL . 'styles/tn-pallet.css',
-        array('wp-color-picker'),
+        array('wp-color-picker', 'dashicons'),
         TNP_VERSION
     );
     wp_enqueue_script(

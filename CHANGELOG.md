@@ -2,6 +2,12 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.3 - 2026-07-03
+
+- Changed the palette admin screen from a table to responsive colour cards.
+- Kept colour pickers open by default to avoid layout jumps while editing.
+- Replaced the remove text link with a trash icon button.
+
 ## 0.1.2 - 2026-07-03
 
 - Added WordPress's native `update_plugins_github.com` update URI filter path for GitHub release checks.
