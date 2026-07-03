@@ -2,6 +2,10 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.6 - 2026-07-03
+
+- Added a native WordPress Help tab with copy/paste examples for generated palette utility classes.
+
 ## 0.1.5 - 2026-07-03
 
 - Reissued the update-check and native open colour picker fixes with a fresh version bump for manual update clarity.

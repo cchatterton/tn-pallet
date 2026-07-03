@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 add_action('admin_menu', 'tnp_register_admin_page');
 add_action('admin_post_tnp_save_palette', 'tnp_handle_save_palette');
 add_action('admin_post_tnp_regenerate_css', 'tnp_handle_regenerate_css');
+add_action('load-appearance_page_' . TNP_MENU_SLUG, 'tnp_register_help_tabs');
 
 function tnp_register_admin_page(): void
 {
@@ -21,6 +22,28 @@ function tnp_register_admin_page(): void
         'edit_theme_options',
         TNP_MENU_SLUG,
         'tnp_render_admin_page'
+    );
+}
+
+function tnp_register_help_tabs(): void
+{
+    $screen = get_current_screen();
+
+    if (!$screen) {
+        return;
+    }
+
+    $screen->add_help_tab(
+        array(
+            'id' => 'tnp_palette_classes',
+            'title' => __('Palette Classes', 'tn-pallet'),
+            'content' => tnp_render_palette_classes_help(),
+        )
+    );
+
+    $screen->set_help_sidebar(
+        '<p><strong>' . esc_html__('Generated CSS', 'tn-pallet') . '</strong></p>' .
+        '<p>' . esc_html(tnp_get_css_file_info()['path']) . '</p>'
     );
 }
 
@@ -192,6 +215,85 @@ function tnp_render_palette_row(array $colour): void
         <input type="text" name="tnp_picker[]" value="<?php echo esc_attr($hex); ?>" class="tnp-colour-picker">
     </div>
     <?php
+}
+
+function tnp_render_palette_classes_help(): string
+{
+    $palette = tnp_get_palette();
+
+    if (empty($palette)) {
+        return '<p>' . esc_html__('Save at least one palette colour to generate utility classes.', 'tn-pallet') . '</p>';
+    }
+
+    $first = tnp_sanitize_palette_name((string) ($palette[0]['name'] ?? ''));
+    $names = array_map(
+        static function (array $colour): string {
+            return tnp_sanitize_palette_name((string) ($colour['name'] ?? ''));
+        },
+        $palette
+    );
+    $names = array_values(array_filter(array_unique($names)));
+
+    $html = '<p>' . esc_html__('Use these generated classes in templates, blocks, or custom markup. Replace the example colour name with any configured palette name.', 'tn-pallet') . '</p>';
+    $html .= '<p><strong>' . esc_html__('Example', 'tn-pallet') . '</strong></p>';
+    $html .= '<pre><code>' . esc_html(tnp_get_palette_class_example($first)) . '</code></pre>';
+    $html .= '<p><strong>' . esc_html__('Available Class Patterns', 'tn-pallet') . '</strong></p>';
+    $html .= '<pre><code>' . esc_html(tnp_get_palette_class_patterns()) . '</code></pre>';
+    $html .= '<p><strong>' . esc_html__('Configured Palette Classes', 'tn-pallet') . '</strong></p>';
+    $html .= '<pre><code>' . esc_html(tnp_get_palette_class_reference($names)) . '</code></pre>';
+
+    return $html;
+}
+
+function tnp_get_palette_class_example(string $name): string
+{
+    return implode(
+        "\n",
+        array(
+            '<div class="text-' . $name . '">Text colour</div>',
+            '<div class="text-' . $name . '-50">Text at 50% opacity</div>',
+            '<div class="border-' . $name . '">Border colour</div>',
+            '<div class="background-' . $name . '">Background colour</div>',
+            '<a class="hover-text-' . $name . ' hover-background-' . $name . '-10" href="#">Hover states</a>',
+        )
+    );
+}
+
+function tnp_get_palette_class_patterns(): string
+{
+    return implode(
+        "\n",
+        array(
+            '.text-{name}',
+            '.text-{name}-10 through .text-{name}-90',
+            '.border-{name}',
+            '.border-{name}-10 through .border-{name}-90',
+            '.background-{name}',
+            '.background-{name}-10 through .background-{name}-90',
+            '.hover-text-{name}:hover',
+            '.hover-text-{name}-10 through .hover-text-{name}-90',
+            '.hover-border-{name}:hover',
+            '.hover-border-{name}-10 through .hover-border-{name}-90',
+            '.hover-background-{name}:hover',
+            '.hover-background-{name}-10 through .hover-background-{name}-90',
+        )
+    );
+}
+
+function tnp_get_palette_class_reference(array $names): string
+{
+    $lines = array();
+
+    foreach ($names as $name) {
+        $lines[] = $name;
+        $lines[] = '  text-' . $name . ' text-' . $name . '-50';
+        $lines[] = '  border-' . $name . ' border-' . $name . '-50';
+        $lines[] = '  background-' . $name . ' background-' . $name . '-50';
+        $lines[] = '  hover-text-' . $name . ' hover-border-' . $name . ' hover-background-' . $name;
+        $lines[] = '';
+    }
+
+    return trim(implode("\n", $lines));
 }
 
 function tnp_set_admin_notice(string $message, string $type): void
