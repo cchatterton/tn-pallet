@@ -26,6 +26,8 @@ class TNP_GitHub_Updater
         add_filter('plugins_api', array($this, 'plugin_information'), 10, 3);
         add_filter('plugin_row_meta', array($this, 'plugin_row_meta'), 10, 2);
         add_action('admin_init', array($this, 'handle_manual_update_check'));
+        add_action('admin_notices', array($this, 'manual_update_check_notice'));
+        add_action('network_admin_notices', array($this, 'manual_update_check_notice'));
         add_action('upgrader_process_complete', array($this, 'clear_cache_after_update'), 10, 2);
     }
 
@@ -129,12 +131,7 @@ class TNP_GitHub_Updater
         $links[] = '<a href="' . esc_url(TNP_GITHUB_REPO_URL) . '">' . esc_html__('GitHub', 'tn-pallet') . '</a>';
 
         if (current_user_can('update_plugins')) {
-            $plugins_url = is_multisite() ? network_admin_url('plugins.php') : admin_url('plugins.php');
-            $check_url = wp_nonce_url(
-                add_query_arg('tnp_check_updates', '1', $plugins_url),
-                'tnp_check_updates'
-            );
-            $links[] = '<a href="' . esc_url($check_url) . '">' . esc_html__('Check for updates', 'tn-pallet') . '</a>';
+            $links[] = '<a href="' . esc_url($this->check_updates_url()) . '">' . esc_html__('Check for updates', 'tn-pallet') . '</a>';
         }
 
         return $links;
@@ -154,10 +151,64 @@ class TNP_GitHub_Updater
 
         $this->clear_release_cache();
         delete_site_transient('update_plugins');
+
+        if (!function_exists('wp_update_plugins')) {
+            require_once ABSPATH . 'wp-includes/update.php';
+        }
+
+        if (function_exists('wp_clean_plugins_cache')) {
+            wp_clean_plugins_cache(true);
+        }
+
+        $_GET['force-check'] = '1';
         wp_update_plugins();
 
-        wp_safe_redirect(is_multisite() ? network_admin_url('plugins.php') : admin_url('plugins.php'));
+        $transient = get_site_transient('update_plugins');
+        $transient = $this->add_update_data(is_object($transient) ? $transient : new stdClass());
+        set_site_transient('update_plugins', $transient);
+
+        $notice = isset($transient->response[plugin_basename(TNP_PLUGIN_FILE)]) ? 'update_available' : 'no_update';
+
+        if (get_site_transient(self::ERROR_TRANSIENT)) {
+            $notice = 'lookup_failed';
+        }
+
+        wp_safe_redirect(add_query_arg('tnp_checked_updates', $notice, $this->plugins_page_url()));
         exit;
+    }
+
+    public function manual_update_check_notice(): void
+    {
+        $notice = isset($_GET['tnp_checked_updates']) ? sanitize_key((string) wp_unslash($_GET['tnp_checked_updates'])) : '';
+
+        if ('' === $notice) {
+            return;
+        }
+
+        if ('update_available' === $notice) {
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('TN Pallet update check completed. A newer version is available below.', 'tn-pallet') . '</p></div>';
+            return;
+        }
+
+        if ('lookup_failed' === $notice) {
+            $message = __('TN Pallet could not read the latest GitHub release. The site may be blocked from reaching GitHub or rate limited.', 'tn-pallet');
+            $error = get_site_transient(self::ERROR_TRANSIENT);
+
+            if (is_array($error) && !empty($error['message'])) {
+                $message .= ' ' . sprintf(
+                    /* translators: %s: GitHub lookup error message. */
+                    __('GitHub returned: %s', 'tn-pallet'),
+                    (string) $error['message']
+                );
+            }
+
+            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html($message) . '</p></div>';
+            return;
+        }
+
+        if ('no_update' === $notice) {
+            echo '<div class="notice notice-info is-dismissible"><p>' . esc_html__('TN Pallet update check completed. No newer GitHub release was found.', 'tn-pallet') . '</p></div>';
+        }
     }
 
     public function clear_cache_after_update($upgrader, array $hook_extra): void
@@ -364,6 +415,19 @@ class TNP_GitHub_Updater
 
         return isset($request['force-check'])
             || in_array($action, array('update-selected', 'upgrade-plugin', 'do-plugin-upgrade'), true);
+    }
+
+    private function check_updates_url(): string
+    {
+        return wp_nonce_url(
+            add_query_arg('tnp_check_updates', '1', $this->plugins_page_url()),
+            'tnp_check_updates'
+        );
+    }
+
+    private function plugins_page_url(): string
+    {
+        return is_multisite() ? network_admin_url('plugins.php') : admin_url('plugins.php');
     }
 
     private function store_error(string $type, int $code, string $message, string $body): void

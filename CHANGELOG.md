@@ -2,6 +2,11 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.4 - 2026-07-03
+
+- Made the plugin row "Check for updates" action explicitly persist TN Pallet update data after a forced GitHub release check.
+- Added admin notices for manual update check results.
+
 ## 0.1.3 - 2026-07-03
 
 - Changed the palette admin screen from a table to responsive colour cards.
