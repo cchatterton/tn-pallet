@@ -2,6 +2,10 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.5 - 2026-07-03
+
+- Reissued the update-check and native open colour picker fixes with a fresh version bump for manual update clarity.
+
 ## 0.1.4 - 2026-07-03
 
 - Made the plugin row "Check for updates" action explicitly persist TN Pallet update data after a forced GitHub release check.
