@@ -22,6 +22,7 @@ class TNP_GitHub_Updater
     {
         add_filter('pre_set_site_transient_update_plugins', array($this, 'add_update_data'));
         add_filter('site_transient_update_plugins', array($this, 'add_update_data'));
+        add_filter('update_plugins_github.com', array($this, 'get_update_uri_data'), 10, 4);
         add_filter('plugins_api', array($this, 'plugin_information'), 10, 3);
         add_filter('plugin_row_meta', array($this, 'plugin_row_meta'), 10, 2);
         add_action('admin_init', array($this, 'handle_manual_update_check'));
@@ -61,6 +62,34 @@ class TNP_GitHub_Updater
         }
 
         return $transient;
+    }
+
+    public function get_update_uri_data($update, array $plugin_data, string $plugin_file, array $locales)
+    {
+        unset($locales);
+
+        if (plugin_basename(TNP_PLUGIN_FILE) !== $plugin_file) {
+            return $update;
+        }
+
+        if (empty($plugin_data['UpdateURI']) || TNP_GITHUB_REPO_URL !== untrailingslashit((string) $plugin_data['UpdateURI'])) {
+            return $update;
+        }
+
+        $release = $this->get_latest_release($this->is_forced_update_check());
+
+        if (!$release || empty($release['version']) || empty($release['download_url'])) {
+            return false;
+        }
+
+        return array(
+            'version' => $release['version'],
+            'slug' => self::SLUG,
+            'url' => $release['html_url'],
+            'package' => $release['download_url'],
+            'requires' => '6.0',
+            'requires_php' => '8.1',
+        );
     }
 
     public function plugin_information($result, string $action, object $args)

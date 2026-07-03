@@ -2,6 +2,10 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.2 - 2026-07-03
+
+- Added WordPress's native `update_plugins_github.com` update URI filter path for GitHub release checks.
+
 ## 0.1.1 - 2026-07-03
 
 - Removed manual colour value and preview columns from the palette admin screen.
