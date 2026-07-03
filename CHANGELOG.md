@@ -6,6 +6,7 @@ All notable changes to TN Pallet are recorded here.
 
 - Made the plugin row "Check for updates" action explicitly persist TN Pallet update data after a forced GitHub release check.
 - Added admin notices for manual update check results.
+- Restored the native WordPress colour picker layout inside palette cards while keeping pickers open by default.
 
 ## 0.1.3 - 2026-07-03
 

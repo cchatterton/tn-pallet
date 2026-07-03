@@ -4,7 +4,7 @@
 
 .tnp-palette-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 320px));
     gap: 16px;
     max-width: 1200px;
     margin-top: 16px;
@@ -52,39 +52,24 @@
     line-height: 34px;
 }
 
-.tnp-palette-card .wp-picker-container,
-.tnp-palette-card .wp-picker-input-wrap,
-.tnp-palette-card .wp-picker-holder,
-.tnp-palette-card .iris-picker {
-    width: 100% !important;
-    box-sizing: border-box;
-}
-
 .tnp-palette-card .wp-picker-input-wrap {
-    display: block !important;
+    display: inline-block !important;
 }
 
 .tnp-palette-card .wp-picker-input-wrap label {
-    display: block;
+    display: inline-block;
 }
 
-.tnp-palette-card .wp-color-picker {
-    width: 100% !important;
-    margin: 0 0 10px;
-}
-
-.tnp-palette-card .wp-picker-clear {
-    margin: 0 0 10px 0;
+.tnp-palette-card .wp-picker-holder {
+    clear: both;
 }
 
 .tnp-palette-card .iris-picker {
-    max-width: 100%;
-    border: 0;
-    padding: 0;
+    margin-top: 0;
 }
 
-.tnp-palette-card .iris-picker-inner {
-    inset: 0 !important;
+.tnp-palette-card .wp-color-result {
+    margin-bottom: 10px;
 }
 
 .tnp-regenerate-form {

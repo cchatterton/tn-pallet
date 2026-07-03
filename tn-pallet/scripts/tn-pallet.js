@@ -6,12 +6,15 @@
             var $input = $(this);
 
             $input.wpColorPicker({
-                defaultColor: '#000000'
+                defaultColor: '#000000',
+                hide: false
             });
 
-            $input.closest('.wp-picker-container').addClass('wp-picker-active');
-            $input.closest('.wp-picker-container').find('.wp-picker-holder').show();
-            $input.closest('.wp-picker-container').find('.wp-color-result').attr('tabindex', '-1').hide();
+            var $container = $input.closest('.wp-picker-container');
+
+            if (!$container.hasClass('wp-picker-active')) {
+                $input.wpColorPicker('open');
+            }
         });
     }
 
