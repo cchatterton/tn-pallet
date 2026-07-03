@@ -49,6 +49,7 @@ function tnp_filter_theme_json_palette($theme_json)
                 'color' => array(
                     'palette' => $editor_palette,
                     'custom' => tnp_allow_custom_editor_colours(),
+                    'defaultPalette' => false,
                 ),
             ),
         )

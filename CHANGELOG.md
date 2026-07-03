@@ -6,6 +6,7 @@ All notable changes to TN Pallet are recorded here.
 
 - Fixed manual update checks so WordPress renders the plugin update row after a successful GitHub release lookup.
 - Normalised GitHub updater payloads for both WordPress's native Update URI API and classic plugin update rows.
+- Removed WordPress's default editor colour palette from the block editor colour picker.
 
 ## 0.1.7 - 2026-07-03
 
