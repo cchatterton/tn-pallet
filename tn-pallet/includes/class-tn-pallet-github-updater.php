@@ -25,7 +25,7 @@ class TNP_GitHub_Updater
         add_filter('update_plugins_github.com', array($this, 'get_update_uri_data'), 10, 4);
         add_filter('plugins_api', array($this, 'plugin_information'), 10, 3);
         add_filter('plugin_row_meta', array($this, 'plugin_row_meta'), 10, 2);
-        add_action('admin_init', array($this, 'handle_manual_update_check'));
+        add_action('load-plugins.php', array($this, 'handle_manual_update_check'), 1);
         add_action('admin_notices', array($this, 'manual_update_check_notice'));
         add_action('network_admin_notices', array($this, 'manual_update_check_notice'));
         add_action('upgrader_process_complete', array($this, 'clear_cache_after_update'), 10, 2);
@@ -51,16 +51,7 @@ class TNP_GitHub_Updater
         }
 
         if (version_compare($release['version'], TNP_VERSION, '>')) {
-            $transient->response[$plugin_file] = (object) array(
-                'id' => TNP_GITHUB_REPO_URL,
-                'slug' => self::SLUG,
-                'plugin' => $plugin_file,
-                'new_version' => $release['version'],
-                'url' => $release['html_url'],
-                'package' => $release['download_url'],
-                'requires' => '6.0',
-                'requires_php' => '8.1',
-            );
+            $transient->response[$plugin_file] = (object) $this->build_update_payload($release, $plugin_file);
         }
 
         return $transient;
@@ -84,14 +75,7 @@ class TNP_GitHub_Updater
             return false;
         }
 
-        return array(
-            'version' => $release['version'],
-            'slug' => self::SLUG,
-            'url' => $release['html_url'],
-            'package' => $release['download_url'],
-            'requires' => '6.0',
-            'requires_php' => '8.1',
-        );
+        return $this->build_update_payload($release, $plugin_file);
     }
 
     public function plugin_information($result, string $action, object $args)
@@ -395,6 +379,21 @@ class TNP_GitHub_Updater
         $code = (int) wp_remote_retrieve_response_code($response);
 
         return $code >= 200 && $code < 400;
+    }
+
+    private function build_update_payload(array $release, string $plugin_file): array
+    {
+        return array(
+            'id' => TNP_GITHUB_REPO_URL,
+            'slug' => self::SLUG,
+            'plugin' => $plugin_file,
+            'version' => $release['version'],
+            'new_version' => $release['version'],
+            'url' => $release['html_url'],
+            'package' => $release['download_url'],
+            'requires' => '6.0',
+            'requires_php' => '8.1',
+        );
     }
 
     private function normalise_version(string $tag): string

@@ -2,6 +2,11 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.8 - 2026-07-03
+
+- Fixed manual update checks so WordPress renders the plugin update row after a successful GitHub release lookup.
+- Normalised GitHub updater payloads for both WordPress's native Update URI API and classic plugin update rows.
+
 ## 0.1.7 - 2026-07-03
 
 - Registered the saved palette as the WordPress block editor colour palette.
