@@ -76,6 +76,20 @@
     margin-top: 16px;
 }
 
+.tnp-editor-settings {
+    max-width: 1200px;
+    margin: 18px 0 0;
+    padding: 12px 14px;
+    border: 1px solid #c3c4c7;
+    border-radius: 6px;
+    background: #fff;
+}
+
+.tnp-editor-settings legend {
+    padding: 0 4px;
+    font-weight: 600;
+}
+
 @media screen and (max-width: 782px) {
     .tnp-palette-grid {
         grid-template-columns: 1fr;

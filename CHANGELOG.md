@@ -2,6 +2,13 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.7 - 2026-07-03
+
+- Registered the saved palette as the WordPress block editor colour palette.
+- Replaced theme colour palettes with the TN Pallet palette for classic, hybrid, and block themes.
+- Added an "Allow custom editor colours" setting.
+- Cleared editor palette/theme JSON caches after palette saves and CSS regeneration.
+
 ## 0.1.6 - 2026-07-03
 
 - Added a native WordPress Help tab with copy/paste examples for generated palette utility classes.

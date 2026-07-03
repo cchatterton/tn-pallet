@@ -12,10 +12,16 @@ if (!defined('ABSPATH')) {
 function tnp_activate_plugin(): void
 {
     $stored = get_option(TNP_OPTION_NAME, null);
+    $allow_custom_colours = get_option(TNP_CUSTOM_EDITOR_COLOURS_OPTION, null);
 
     if (null === $stored || false === $stored || '' === $stored) {
         tnp_save_palette(tnp_get_default_palette());
     }
 
+    if (null === $allow_custom_colours || false === $allow_custom_colours || '' === $allow_custom_colours) {
+        update_option(TNP_CUSTOM_EDITOR_COLOURS_OPTION, '1', false);
+    }
+
     tnp_generate_palette_css(tnp_get_palette());
+    tnp_clear_editor_palette_caches();
 }

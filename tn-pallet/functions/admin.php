@@ -57,6 +57,7 @@ function tnp_handle_save_palette(): void
 
     $names = isset($_POST['tnp_name']) && is_array($_POST['tnp_name']) ? wp_unslash($_POST['tnp_name']) : array();
     $picker_colours = isset($_POST['tnp_picker']) && is_array($_POST['tnp_picker']) ? wp_unslash($_POST['tnp_picker']) : array();
+    $allow_custom_colours = !empty($_POST['tnp_allow_custom_editor_colours']);
 
     $result = tnp_prepare_submitted_palette($names, $picker_colours);
 
@@ -66,7 +67,9 @@ function tnp_handle_save_palette(): void
     }
 
     tnp_save_palette($result);
+    tnp_save_custom_editor_colours_setting($allow_custom_colours);
     $generated = tnp_generate_palette_css($result);
+    tnp_clear_editor_palette_caches();
 
     if (is_wp_error($generated)) {
         tnp_set_admin_notice($generated->get_error_message(), 'error');
@@ -86,6 +89,7 @@ function tnp_handle_regenerate_css(): void
     check_admin_referer('tnp_regenerate_css');
 
     $generated = tnp_generate_palette_css(tnp_get_palette());
+    tnp_clear_editor_palette_caches();
 
     if (is_wp_error($generated)) {
         tnp_set_admin_notice($generated->get_error_message(), 'error');
@@ -149,6 +153,7 @@ function tnp_render_admin_page(): void
 
     $palette = tnp_get_palette();
     $css_info = tnp_get_css_file_info();
+    $allow_custom_colours = tnp_allow_custom_editor_colours();
     $notice = tnp_get_admin_notice();
     ?>
     <div class="wrap tnp-admin">
@@ -176,6 +181,14 @@ function tnp_render_admin_page(): void
                     <?php tnp_render_palette_row($colour); ?>
                 <?php endforeach; ?>
             </div>
+
+            <fieldset class="tnp-editor-settings">
+                <legend><?php echo esc_html__('Block Editor', 'tn-pallet'); ?></legend>
+                <label>
+                    <input type="checkbox" name="tnp_allow_custom_editor_colours" value="1" <?php checked($allow_custom_colours); ?>>
+                    <?php echo esc_html__('Allow custom editor colours', 'tn-pallet'); ?>
+                </label>
+            </fieldset>
 
             <p>
                 <button type="button" class="button" id="tnp-add-colour"><?php echo esc_html__('Add Colour', 'tn-pallet'); ?></button>
