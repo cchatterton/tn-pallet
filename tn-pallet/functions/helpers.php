@@ -32,13 +32,13 @@ function tnp_get_palette(): array
     $stored = get_option(TNP_OPTION_NAME, '');
 
     if (!is_string($stored) || '' === trim($stored)) {
-        return tnp_get_default_palette();
+        return tnp_sort_palette_by_name(tnp_get_default_palette());
     }
 
     $decoded = json_decode($stored, true);
 
     if (!is_array($decoded)) {
-        return tnp_get_default_palette();
+        return tnp_sort_palette_by_name(tnp_get_default_palette());
     }
 
     $palette = array();
@@ -63,12 +63,24 @@ function tnp_get_palette(): array
         );
     }
 
-    return $palette;
+    return tnp_sort_palette_by_name($palette);
 }
 
 function tnp_save_palette(array $palette): bool
 {
-    return update_option(TNP_OPTION_NAME, wp_json_encode(array_values($palette)), false);
+    return update_option(TNP_OPTION_NAME, wp_json_encode(tnp_sort_palette_by_name($palette)), false);
+}
+
+function tnp_sort_palette_by_name(array $palette): array
+{
+    usort(
+        $palette,
+        static function (array $first, array $second): int {
+            return strnatcasecmp((string) ($first['name'] ?? ''), (string) ($second['name'] ?? ''));
+        }
+    );
+
+    return array_values($palette);
 }
 
 function tnp_sanitize_palette_name(string $name): string
@@ -156,8 +168,8 @@ function tnp_rgb_string_is_valid(string $rgb): bool
 function tnp_get_css_file_info(): array
 {
     $uploads = wp_upload_dir();
-    $base_dir = trailingslashit($uploads['basedir']) . 'alphasys-palette';
-    $base_url = trailingslashit($uploads['baseurl']) . 'alphasys-palette';
+    $base_dir = trailingslashit($uploads['basedir']) . 'tn-pallet';
+    $base_url = trailingslashit($uploads['baseurl']) . 'tn-pallet';
     $path = trailingslashit($base_dir) . 'palette.css';
 
     return array(
@@ -190,6 +202,7 @@ function tnp_generate_palette_css(array $palette)
 
 function tnp_build_palette_css(array $palette): string
 {
+    $palette = tnp_sort_palette_by_name($palette);
     $css = ":root {\n";
 
     foreach ($palette as $colour) {

@@ -3,29 +3,8 @@
 
     function initColourPicker($context) {
         $context.find('.tnp-colour-picker').wpColorPicker({
-            change: function (event, ui) {
-                var colour = ui.color.toString();
-                var $row = $(event.target).closest('.tnp-palette-row');
-
-                $row.find('.tnp-colour-value').val(colour);
-                $row.find('.tnp-preview').css('background-color', colour);
-            },
-            clear: function (event) {
-                var $row = $(event.target).closest('.tnp-palette-row');
-
-                $row.find('.tnp-colour-value').val('');
-                $row.find('.tnp-preview').css('background-color', 'transparent');
-            }
+            defaultColor: '#000000'
         });
-    }
-
-    function syncManualColour(input) {
-        var $input = $(input);
-        var colour = $input.val();
-        var $row = $input.closest('.tnp-palette-row');
-
-        $row.find('.tnp-colour-picker').wpColorPicker('color', colour);
-        $row.find('.tnp-preview').css('background-color', colour);
     }
 
     $(function () {
@@ -41,30 +20,8 @@
             initColourPicker($row);
         });
 
-        $rows.on('input change', '.tnp-colour-value', function () {
-            syncManualColour(this);
-        });
-
         $rows.on('click', '.tnp-remove-colour', function () {
             $(this).closest('.tnp-palette-row').remove();
-        });
-
-        $rows.on('click', '.tnp-move-up', function () {
-            var $row = $(this).closest('.tnp-palette-row');
-            var $previous = $row.prev('.tnp-palette-row');
-
-            if ($previous.length) {
-                $row.insertBefore($previous);
-            }
-        });
-
-        $rows.on('click', '.tnp-move-down', function () {
-            var $row = $(this).closest('.tnp-palette-row');
-            var $next = $row.next('.tnp-palette-row');
-
-            if ($next.length) {
-                $row.insertAfter($next);
-            }
         });
     });
 })(jQuery);

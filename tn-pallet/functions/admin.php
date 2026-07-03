@@ -33,10 +33,9 @@ function tnp_handle_save_palette(): void
     check_admin_referer('tnp_save_palette');
 
     $names = isset($_POST['tnp_name']) && is_array($_POST['tnp_name']) ? wp_unslash($_POST['tnp_name']) : array();
-    $manual_colours = isset($_POST['tnp_colour']) && is_array($_POST['tnp_colour']) ? wp_unslash($_POST['tnp_colour']) : array();
     $picker_colours = isset($_POST['tnp_picker']) && is_array($_POST['tnp_picker']) ? wp_unslash($_POST['tnp_picker']) : array();
 
-    $result = tnp_prepare_submitted_palette($names, $manual_colours, $picker_colours);
+    $result = tnp_prepare_submitted_palette($names, $picker_colours);
 
     if (is_wp_error($result)) {
         tnp_set_admin_notice($result->get_error_message(), 'error');
@@ -74,18 +73,17 @@ function tnp_handle_regenerate_css(): void
     tnp_redirect_to_palette_page();
 }
 
-function tnp_prepare_submitted_palette(array $names, array $manual_colours, array $picker_colours)
+function tnp_prepare_submitted_palette(array $names, array $picker_colours)
 {
     $palette = array();
     $used_names = array();
-    $row_count = max(count($names), count($manual_colours), count($picker_colours));
+    $row_count = max(count($names), count($picker_colours));
 
     for ($index = 0; $index < $row_count; $index++) {
         $raw_name = isset($names[$index]) && is_scalar($names[$index]) ? sanitize_text_field((string) $names[$index]) : '';
         $name = tnp_sanitize_palette_name($raw_name);
-        $raw_colour = isset($manual_colours[$index]) && is_scalar($manual_colours[$index]) ? sanitize_text_field((string) $manual_colours[$index]) : '';
         $picker_colour = isset($picker_colours[$index]) && is_scalar($picker_colours[$index]) ? sanitize_text_field((string) $picker_colours[$index]) : '';
-        $colour_value = '' !== trim($raw_colour) ? $raw_colour : $picker_colour;
+        $colour_value = $picker_colour;
 
         if ('' === trim($raw_name) && '' === trim($colour_value)) {
             continue;
@@ -117,7 +115,7 @@ function tnp_prepare_submitted_palette(array $names, array $manual_colours, arra
         return new WP_Error('tnp_empty_palette', __('Add at least one valid palette colour before saving.', 'tn-pallet'));
     }
 
-    return $palette;
+    return tnp_sort_palette_by_name($palette);
 }
 
 function tnp_render_admin_page(): void
@@ -153,11 +151,8 @@ function tnp_render_admin_page(): void
             <table class="widefat striped tnp-palette-table">
                 <thead>
                     <tr>
-                        <th scope="col"><?php echo esc_html__('Order', 'tn-pallet'); ?></th>
                         <th scope="col"><?php echo esc_html__('Name', 'tn-pallet'); ?></th>
                         <th scope="col"><?php echo esc_html__('Colour picker', 'tn-pallet'); ?></th>
-                        <th scope="col"><?php echo esc_html__('Manual value', 'tn-pallet'); ?></th>
-                        <th scope="col"><?php echo esc_html__('Preview', 'tn-pallet'); ?></th>
                         <th scope="col"><?php echo esc_html__('Actions', 'tn-pallet'); ?></th>
                     </tr>
                 </thead>
@@ -193,10 +188,6 @@ function tnp_render_palette_row(array $colour): void
     $hex = isset($colour['hex']) ? (string) $colour['hex'] : '#000000';
     ?>
     <tr class="tnp-palette-row">
-        <td class="tnp-order">
-            <button type="button" class="button tnp-move-up" aria-label="<?php echo esc_attr__('Move colour up', 'tn-pallet'); ?>">&uarr;</button>
-            <button type="button" class="button tnp-move-down" aria-label="<?php echo esc_attr__('Move colour down', 'tn-pallet'); ?>">&darr;</button>
-        </td>
         <td>
             <label class="screen-reader-text"><?php echo esc_html__('Colour name', 'tn-pallet'); ?></label>
             <input type="text" name="tnp_name[]" value="<?php echo esc_attr($name); ?>" pattern="[a-z][a-z0-9-]*" class="regular-text" required>
@@ -204,13 +195,6 @@ function tnp_render_palette_row(array $colour): void
         <td>
             <label class="screen-reader-text"><?php echo esc_html__('Colour picker', 'tn-pallet'); ?></label>
             <input type="text" name="tnp_picker[]" value="<?php echo esc_attr($hex); ?>" class="tnp-colour-picker">
-        </td>
-        <td>
-            <label class="screen-reader-text"><?php echo esc_html__('Manual colour value', 'tn-pallet'); ?></label>
-            <input type="text" name="tnp_colour[]" value="<?php echo esc_attr($hex); ?>" class="regular-text tnp-colour-value" required>
-        </td>
-        <td>
-            <span class="tnp-preview" style="background-color: <?php echo esc_attr($hex); ?>"></span>
         </td>
         <td>
             <button type="button" class="button-link-delete tnp-remove-colour"><?php echo esc_html__('Remove', 'tn-pallet'); ?></button>
