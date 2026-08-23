@@ -1,4 +1,4 @@
 {
-  "version": "0.1.11",
-  "body": "Restores TN Pallet's production asset hooks exactly to the last known-good implementation while retaining API-independent update discovery."
+  "version": "0.1.12",
+  "body": "Fixes palette stylesheet URLs being emitted as HTTP on HTTPS production pages behind a reverse proxy while preserving the restored production asset hooks."
 }

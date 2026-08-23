@@ -2,6 +2,11 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.12 - 2026-08-23
+
+- Fixed generated palette stylesheet URLs using HTTP on HTTPS production pages behind a reverse proxy, which caused browsers to block `palette.css` as mixed content.
+- Preserved the restored v0.1.8 asset hooks while normalising only the public stylesheet URL scheme.
+
 ## 0.1.11 - 2026-08-23
 
 - Restored the production asset hooks exactly to the last known-good 0.1.8 implementation: explicit front-end loading, explicit admin loading, and the established editor asset hook.

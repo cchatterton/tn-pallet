@@ -25,10 +25,24 @@ function tnp_enqueue_palette_css(): void
 
     wp_enqueue_style(
         'tnp-palette',
-        $info['url'],
+        tnp_normalise_public_asset_url($info['url']),
         array(),
         (string) $info['modified']
     );
+}
+
+function tnp_normalise_public_asset_url(string $url): string
+{
+    $home_scheme = strtolower((string) wp_parse_url(home_url('/'), PHP_URL_SCHEME));
+    $forwarded_proto = isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
+        ? strtolower((string) wp_unslash($_SERVER['HTTP_X_FORWARDED_PROTO']))
+        : '';
+
+    if ('https' === $home_scheme || is_ssl() || in_array('https', array_map('trim', explode(',', $forwarded_proto)), true)) {
+        return set_url_scheme($url, 'https');
+    }
+
+    return 'http' === $home_scheme ? set_url_scheme($url, 'http') : $url;
 }
 
 function tnp_enqueue_admin_assets(string $hook_suffix): void
