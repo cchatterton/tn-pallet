@@ -1,4 +1,4 @@
 {
-  "version": "0.1.10",
-  "body": "Restores explicit front-end palette loading, adds API-independent update discovery, and removes the unreliable release-asset HEAD probe."
+  "version": "0.1.11",
+  "body": "Restores TN Pallet's production asset hooks exactly to the last known-good implementation while retaining API-independent update discovery."
 }

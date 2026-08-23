@@ -2,6 +2,11 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.11 - 2026-08-23
+
+- Restored the production asset hooks exactly to the last known-good 0.1.8 implementation: explicit front-end loading, explicit admin loading, and the established editor asset hook.
+- Removed TN Pallet's direct editor-iframe integration; AS Local CSS now owns mirroring established front-end styles into that iframe.
+
 ## 0.1.10 - 2026-08-23
 
 - Restored the dedicated front-end stylesheet enqueue while retaining block-editor iframe loading, so themes that suppress shared block assets still receive `palette.css`.
