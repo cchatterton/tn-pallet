@@ -2,6 +2,12 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.9 - 2026-08-23
+
+- Loaded the generated palette stylesheet through `enqueue_block_assets` so its CSS custom properties and utility classes reach the block editor iframe as well as the front end.
+- Stopped relying on the outer editor asset hook for canvas styling.
+- Removed the plugin URI header so WordPress shows the updater's GitHub and update-check actions without a redundant "Visit plugin site" link.
+
 ## 0.1.8 - 2026-07-03
 
 - Fixed manual update checks so WordPress renders the plugin update row after a successful GitHub release lookup.

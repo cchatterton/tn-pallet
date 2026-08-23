@@ -2,7 +2,7 @@
 
 TN Pallet is a lightweight WordPress plugin for managing a named colour palette from Appearance > Palette.
 
-The plugin stores the complete palette as a JSON string in the `tnp_colour_palette` option, generates `palette.css` under `wp-content/uploads/tn-pallet/`, and enqueues that generated CSS on the front end, in admin, and in the block editor.
+The plugin stores the complete palette as a JSON string in the `tnp_colour_palette` option, generates `palette.css` under `wp-content/uploads/tn-pallet/`, and enqueues that generated CSS on the front end, in admin, and inside the block editor canvas.
 
 ## GitHub Update Metadata
 
@@ -13,7 +13,6 @@ The plugin stores the complete palette as a JSON string in the `tnp_colour_palet
 - Release ZIP asset name: `tn-pallet.zip`
 - Author: `Techn`
 - Author URL: `https://techn.com.au`
-- Plugin URI: `https://github.com/cchatterton/tn-pallet/releases/latest`
 - Update URI: `https://github.com/cchatterton/tn-pallet`
 
 ## Build
