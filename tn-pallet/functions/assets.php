@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+add_action('wp_enqueue_scripts', 'tnp_enqueue_palette_css');
 add_action('enqueue_block_assets', 'tnp_enqueue_palette_css');
 add_action('admin_enqueue_scripts', 'tnp_enqueue_admin_assets');
 

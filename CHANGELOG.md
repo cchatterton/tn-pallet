@@ -2,6 +2,12 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.10 - 2026-08-23
+
+- Restored the dedicated front-end stylesheet enqueue while retaining block-editor iframe loading, so themes that suppress shared block assets still receive `palette.css`.
+- Added a repository-controlled update manifest so WordPress can discover releases when the GitHub API returns a shared-host rate-limit or forbidden response.
+- Removed the release-asset `HEAD` request from the public redirect fallback because signed GitHub asset URLs can reject `HEAD` while accepting the updater's normal `GET` download.
+
 ## 0.1.9 - 2026-08-23
 
 - Loaded the generated palette stylesheet through `enqueue_block_assets` so its CSS custom properties and utility classes reach the block editor iframe as well as the front end.

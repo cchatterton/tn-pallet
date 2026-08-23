@@ -17,6 +17,7 @@ class TNP_GitHub_Updater
     private const ASSET_NAME = 'tn-pallet.zip';
     private const RELEASE_TRANSIENT = 'tnp_github_latest_release';
     private const ERROR_TRANSIENT = 'tnp_github_latest_release_error';
+    private const MANIFEST_URL = 'https://raw.githubusercontent.com/cchatterton/tn-pallet/main/update.json';
 
     public function register(): void
     {
@@ -222,7 +223,11 @@ class TNP_GitHub_Updater
             return $cached;
         }
 
-        $release = $this->request_latest_release_from_api();
+        $release = $this->request_latest_release_from_manifest();
+
+        if (!$release) {
+            $release = $this->request_latest_release_from_api();
+        }
 
         if (!$release) {
             $release = $this->request_latest_release_from_redirect();
@@ -238,6 +243,40 @@ class TNP_GitHub_Updater
         delete_site_transient(self::ERROR_TRANSIENT);
 
         return $release;
+    }
+
+    private function request_latest_release_from_manifest()
+    {
+        $response = wp_remote_get(
+            self::MANIFEST_URL,
+            array(
+                'timeout' => 10,
+                'headers' => array(
+                    'Accept' => 'application/json',
+                    'User-Agent' => 'TN-Pallet/' . TNP_VERSION,
+                ),
+            )
+        );
+
+        if (is_wp_error($response) || 200 !== (int) wp_remote_retrieve_response_code($response)) {
+            return false;
+        }
+
+        $manifest = json_decode(wp_remote_retrieve_body($response), true);
+        $version = is_array($manifest) ? $this->normalise_version((string) ($manifest['version'] ?? '')) : '';
+
+        if ('' === $version) {
+            return false;
+        }
+
+        $tag = 'v' . $version;
+
+        return array(
+            'version' => $version,
+            'download_url' => esc_url_raw(TNP_GITHUB_REPO_URL . '/releases/download/' . $tag . '/' . self::ASSET_NAME),
+            'html_url' => esc_url_raw(TNP_GITHUB_REPO_URL . '/releases/tag/' . $tag),
+            'body' => (string) ($manifest['body'] ?? ''),
+        );
     }
 
     private function request_latest_release_from_api()
@@ -316,26 +355,19 @@ class TNP_GitHub_Updater
             return false;
         }
 
-        $version = $this->normalise_version(rawurldecode($matches[1]));
+        $tag = rawurldecode($matches[1]);
+        $version = $this->normalise_version($tag);
 
         if ('' === $version) {
             return false;
         }
 
-        $asset_url = TNP_GITHUB_REPO_URL . '/releases/download/v' . $version . '/' . self::ASSET_NAME;
-
-        if (!$this->asset_is_reachable($asset_url)) {
-            $asset_url = TNP_GITHUB_REPO_URL . '/releases/download/' . $version . '/' . self::ASSET_NAME;
-        }
-
-        if (!$this->asset_is_reachable($asset_url)) {
-            return false;
-        }
+        $asset_url = TNP_GITHUB_REPO_URL . '/releases/download/' . rawurlencode($tag) . '/' . self::ASSET_NAME;
 
         return array(
             'version' => $version,
             'download_url' => esc_url_raw($asset_url),
-            'html_url' => esc_url_raw(TNP_GITHUB_REPO_URL . '/releases/tag/v' . $version),
+            'html_url' => esc_url_raw(TNP_GITHUB_REPO_URL . '/releases/tag/' . rawurlencode($tag)),
             'body' => '',
         );
     }
@@ -357,28 +389,6 @@ class TNP_GitHub_Updater
         }
 
         return '';
-    }
-
-    private function asset_is_reachable(string $url): bool
-    {
-        $response = wp_remote_head(
-            $url,
-            array(
-                'timeout' => 10,
-                'redirection' => 5,
-                'headers' => array(
-                    'User-Agent' => 'TN-Pallet/' . TNP_VERSION,
-                ),
-            )
-        );
-
-        if (is_wp_error($response)) {
-            return false;
-        }
-
-        $code = (int) wp_remote_retrieve_response_code($response);
-
-        return $code >= 200 && $code < 400;
     }
 
     private function build_update_payload(array $release, string $plugin_file): array
