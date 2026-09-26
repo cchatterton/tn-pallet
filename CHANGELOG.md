@@ -2,6 +2,11 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.14 - 2026-09-26
+
+- Lower the PHP requirement to 7.4, matching WordPress 7.0.
+- Allow the PHP 7.4-compatible TN Update Controller bootstrap.
+
 ## 0.1.13 - 2026-09-26
 
 - Require WordPress 7.0+ and PHP 8.5+ for this release.

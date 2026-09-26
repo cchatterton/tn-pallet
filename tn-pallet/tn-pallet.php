@@ -2,9 +2,9 @@
 /**
  * Plugin Name: TN Pallet
  * Description: Manage a named colour palette and generated utility CSS from WordPress admin.
- * Version: 0.1.13
+ * Version: 0.1.14
  * Requires at least: 7.0
- * Requires PHP: 8.5
+ * Requires PHP: 7.4
  * Update URI: https://github.com/cchatterton/tn-pallet
  * Author: Techn
  * Author URI: https://techn.com.au
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('TNP_VERSION', '0.1.13');
+define('TNP_VERSION', '0.1.14');
 define('TNP_PLUGIN_FILE', __FILE__);
 define('TNP_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('TNP_PLUGIN_URL', plugin_dir_url(__FILE__));

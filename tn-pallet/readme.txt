@@ -3,8 +3,8 @@ Contributors:
 Tags: techn
 Requires at least: 7.0
 Tested up to: 7.1.2
-Stable tag: 0.1.13
-Requires PHP: 8.5
+Stable tag: 0.1.14
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,9 @@ Manage a named colour palette and generated utility CSS from WordPress admin.
 3. Configure its existing feature settings as usual.
 
 == Changelog ==
+
+= 0.1.14 =
+* Lower the PHP requirement to 7.4 to match WordPress 7.0; update the controller installation compatibility check.
 
 = 0.1.13 =
 * Replace the independent updater with TN Update Controller integration.
