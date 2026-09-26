@@ -2,6 +2,14 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.1.13 - 2026-09-26
+
+- Require WordPress 7.0+ and PHP 8.5+ for this release.
+
+- Replace the independent GitHub updater with the version 1 TN Update Controller integration.
+- Add local Install/Activate/Check controller actions and standardise Techn author/repository metadata.
+- Preserve plugin identity, feature code, settings and activation scope; no feature-plugin release discovery runs during page rendering.
+
 ## 0.1.12 - 2026-08-23
 
 - Fixed generated palette stylesheet URLs using HTTP on HTTPS production pages behind a reverse proxy, which caused browsers to block `palette.css` as mixed content.

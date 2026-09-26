@@ -35,3 +35,9 @@ The build writes `dist/tn-pallet.zip` and copies the same package to `tn-pallet.
 - Verify the ZIP contains `tn-pallet/tn-pallet.php` as the top-level plugin file.
 - Create a GitHub release tag matching the plugin version, such as `v0.1.8`.
 - Attach `tn-pallet.zip` to the release.
+
+## Controller migration — 0.1.13
+
+Updates are now supplied by [TN Update Controller](https://github.com/cchatterton/tn-update-controller). The old independent updater has been removed. Plugin identity, feature settings and activation scope are unchanged. Install/activate/check links use local controller detection and never fetch release metadata while rendering. Legacy update guidance below or in historical notes is superseded by this controller integration.
+
+Release order: build and validate the ZIP, publish its matching GitHub release asset, then publish verified controller catalogue metadata. Existing update.json endpoints are maintained only for older, not-yet-migrated installations, after asset verification.
