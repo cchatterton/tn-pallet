@@ -23,3 +23,11 @@ Screenshots are in qa/ and excluded from the distributable ZIP.
 ## Limitations
 
 Minimum WordPress 7.0 and multisite were not exercised in this feature validation. External provider credentials and live image interpretation quality were not tested; connector requests used fixtures. Other provider implementations may have their own image limits or model requirements. Browser zoom beyond ordinary sizing was not exhaustively tested. Filesystem and database failures beyond the covered write failure paths remain host-dependent.
+
+## Published upgrade verification
+
+Published v0.2.0 ZIP matches the committed source and root ZIP byte-for-byte (SHA-256 `8d852b01ef29a7d018636c2c9b8ee469f1259faad05b2d145c02e53f21b2773a`). The public TN Update Controller catalogue was fetched with a unique query and verified for version, tag, plugin basename, asset and checksum.
+
+On disposable WordPress 7.1.3 / PHP 7.4.30, the controller's explicit check displayed native 0.2.0 update metadata and View details. Its checksum-verified WordPress upgrader installed the published ZIP over official 0.1.14. Reloading confirmed preserved custom palette values and names, byte-identical CSS and flat JSON, unchanged editor preference and activation state. The new section editor's save preserved the same palette. Plugin-row/transient reads with the active controller performed zero update-metadata HTTP.
+
+Final automated results: 43 palette assertions and 15 AI assertions on each of PHP 7.4.30, 8.1.23 and 8.5.7, plus controller integration and syntax checks.
