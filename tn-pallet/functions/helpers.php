@@ -63,7 +63,7 @@ function tnp_get_palette(): array
         );
     }
 
-    return tnp_sort_palette_by_name($palette);
+    return tnp_sort_palette_by_name($palette ?: tnp_get_default_palette());
 }
 
 function tnp_save_palette(array $palette): bool
@@ -191,12 +191,18 @@ function tnp_generate_palette_css(array $palette)
     }
 
     $css = tnp_build_palette_css($palette);
-    $written = file_put_contents($info['path'], $css);
+    $temporary = tempnam($info['dir'], '.tnp-');
+    $written = $temporary ? file_put_contents($temporary, $css, LOCK_EX) : false;
 
-    if (false === $written) {
+    if (false === $written || !rename($temporary, $info['path'])) {
+        if ($temporary && file_exists($temporary)) {
+            unlink($temporary);
+        }
         return new WP_Error('tnp_css_file', __('The palette CSS file could not be written.', 'tn-pallet'));
     }
 
+    chmod($info['path'], defined('FS_CHMOD_FILE') ? FS_CHMOD_FILE : 0644);
+    clearstatcache(true, $info['path']);
     return true;
 }
 

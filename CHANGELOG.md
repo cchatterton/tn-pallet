@@ -2,6 +2,15 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.2.0 - 2026-10-10
+
+- Split native Help into sections, CSS examples, class patterns, colour reference, JSON transfer and editor topics, with image help when available.
+- Group existing saved colours using the prefix before the first hyphen without changing identifiers or values. Load the original 12 defaults only when no saved items exist.
+- Add repeatable sections with three automatically named colour cards, horizontal scrolling, plus cards and section removal.
+- Add a permanent JSON editor with copy, download, legacy-array import, validation, previous-save recovery and concurrent-edit protection.
+- Integrate configured WordPress AI connectors for Media Library mockup interpretation and automatic validated JSON/palette saves; retain colours absent from AI responses.
+- Apply Techn Author Branded UI, scoped rem styles, accessible tabs and feedback, nonce/capability checks and atomic CSS publication.
+
 ## 0.1.14 - 2026-09-26
 
 - Lower the PHP requirement to 7.4, matching WordPress 7.0.

@@ -17,7 +17,7 @@ add_action('load-appearance_page_' . TNP_MENU_SLUG, 'tnp_register_help_tabs');
 function tnp_register_admin_page(): void
 {
     add_theme_page(
-        __('Palette', 'tn-pallet'),
+        __('TN Pallet', 'tn-pallet'),
         __('Palette', 'tn-pallet'),
         'edit_theme_options',
         TNP_MENU_SLUG,
@@ -33,13 +33,22 @@ function tnp_register_help_tabs(): void
         return;
     }
 
-    $screen->add_help_tab(
-        array(
-            'id' => 'tnp_palette_classes',
-            'title' => __('Palette Classes', 'tn-pallet'),
-            'content' => tnp_render_palette_classes_help(),
-        )
+    $palette = tnp_get_palette();
+    $first = $palette[0]['name'] ?? 'base-1';
+    $tabs = array(
+        'sections' => array(__('Sections and colours', 'tn-pallet'), '<p>' . esc_html__('Base, Contrast, Dark and Light retain existing names and saved values. Add a section to start with three numbered colours. Names stay fixed; editing a section label does not rename its CSS. Swipe or scroll each row horizontally; keyboard users can focus the row and use arrow keys. Additions and removals take effect when saved.', 'tn-pallet') . '</p>'),
+        'examples' => array(__('CSS examples', 'tn-pallet'), '<pre><code>' . esc_html(tnp_get_palette_class_example($first)) . '</code></pre>'),
+        'patterns' => array(__('Class patterns', 'tn-pallet'), '<pre><code>' . esc_html(tnp_get_palette_class_patterns()) . '</code></pre>'),
+        'reference' => array(__('Your colours', 'tn-pallet'), '<pre><code>' . esc_html(tnp_get_palette_class_reference(array_column($palette, 'name'))) . '</code></pre>'),
+        'json' => array(__('JSON and transfer', 'tn-pallet'), '<p>' . esc_html__('The JSON tab always provides the current editor document. Copy or download it, or paste JSON from another site and select Save JSON. Import replaces the palette; identifiers absent from the import are removed. Legacy flat JSON arrays are accepted. RGB is calculated from hex. The previous saved JSON is available for recovery.', 'tn-pallet') . '</p>'),
+        'editor' => array(__('Block editor', 'tn-pallet'), '<p>' . esc_html__('Saved colours replace the theme palette. Allow custom editor colours controls whether editors can choose additional colours. Saving rebuilds CSS and clears the editor palette cache. Reload an already open editor after saving.', 'tn-pallet') . '</p>'),
     );
+    if (tnp_ai_available()) {
+        $tabs['image'] = array(__('From image', 'tn-pallet'), '<p>' . esc_html__('Choose or upload a mockup in Media Library. Interpret and save sends the image and saved palette to your configured WordPress AI provider. Matching colours are updated, additional colours are added, and unreturned colours are retained. Review the saved result in Palette or JSON. The validated AI response is also saved with the media item.', 'tn-pallet') . '</p>');
+    }
+    foreach ($tabs as $id => $tab) {
+        $screen->add_help_tab(array('id' => 'tnp_' . $id, 'title' => $tab[0], 'content' => $tab[1]));
+    }
 
     $screen->set_help_sidebar(
         '<p><strong>' . esc_html__('Generated CSS', 'tn-pallet') . '</strong></p>' .
@@ -66,16 +75,14 @@ function tnp_handle_save_palette(): void
         tnp_redirect_to_palette_page();
     }
 
-    tnp_save_palette($result);
-    tnp_save_custom_editor_colours_setting($allow_custom_colours);
-    $generated = tnp_generate_palette_css($result);
-    tnp_clear_editor_palette_caches();
-
-    if (is_wp_error($generated)) {
-        tnp_set_admin_notice($generated->get_error_message(), 'error');
-    } else {
-        tnp_set_admin_notice(__('Palette saved and CSS regenerated.', 'tn-pallet'), 'success');
+    $document = tnp_parse_document(wp_json_encode($result));
+    if (is_wp_error($document)) {
+        tnp_set_admin_notice($document->get_error_message(), 'error');
+        tnp_redirect_to_palette_page();
     }
+    $document['allow_custom_editor_colours'] = $allow_custom_colours;
+    $saved = tnp_commit_document($document, tnp_document_revision());
+    tnp_set_admin_notice(is_wp_error($saved) ? $saved->get_error_message() : __('Palette saved and CSS regenerated.', 'tn-pallet'), is_wp_error($saved) ? 'error' : 'success');
 
     tnp_redirect_to_palette_page();
 }
@@ -151,62 +158,10 @@ function tnp_render_admin_page(): void
         wp_die(esc_html__('You do not have permission to edit the palette.', 'tn-pallet'));
     }
 
-    $palette = tnp_get_palette();
     $css_info = tnp_get_css_file_info();
-    $allow_custom_colours = tnp_allow_custom_editor_colours();
     $notice = tnp_get_admin_notice();
-    ?>
-    <div class="wrap tnp-admin">
-        <h1><?php echo esc_html__('Palette', 'tn-pallet'); ?></h1>
-
-        <?php if ($notice) : ?>
-            <div class="notice notice-<?php echo esc_attr($notice['type']); ?> is-dismissible">
-                <p><?php echo esc_html($notice['message']); ?></p>
-            </div>
-        <?php endif; ?>
-
-        <div class="tnp-status">
-            <p><strong><?php echo esc_html__('Configured colours:', 'tn-pallet'); ?></strong> <?php echo esc_html((string) count($palette)); ?></p>
-            <p><strong><?php echo esc_html__('CSS file:', 'tn-pallet'); ?></strong> <?php echo esc_html($css_info['path']); ?></p>
-            <p><strong><?php echo esc_html__('Last generated:', 'tn-pallet'); ?></strong> <?php echo $css_info['modified'] ? esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $css_info['modified'])) : esc_html__('Not generated yet', 'tn-pallet'); ?></p>
-            <p><strong><?php echo esc_html__('Writable and available:', 'tn-pallet'); ?></strong> <?php echo esc_html($css_info['exists'] && $css_info['writable'] ? __('Yes', 'tn-pallet') : __('No', 'tn-pallet')); ?></p>
-        </div>
-
-        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-            <?php wp_nonce_field('tnp_save_palette'); ?>
-            <input type="hidden" name="action" value="tnp_save_palette">
-
-            <div id="tnp-palette-rows" class="tnp-palette-grid">
-                <?php foreach ($palette as $colour) : ?>
-                    <?php tnp_render_palette_row($colour); ?>
-                <?php endforeach; ?>
-            </div>
-
-            <fieldset class="tnp-editor-settings">
-                <legend><?php echo esc_html__('Block Editor', 'tn-pallet'); ?></legend>
-                <label>
-                    <input type="checkbox" name="tnp_allow_custom_editor_colours" value="1" <?php checked($allow_custom_colours); ?>>
-                    <?php echo esc_html__('Allow custom editor colours', 'tn-pallet'); ?>
-                </label>
-            </fieldset>
-
-            <p>
-                <button type="button" class="button" id="tnp-add-colour"><?php echo esc_html__('Add Colour', 'tn-pallet'); ?></button>
-                <?php submit_button(__('Save Palette', 'tn-pallet'), 'primary', 'submit', false); ?>
-            </p>
-        </form>
-
-        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="tnp-regenerate-form">
-            <?php wp_nonce_field('tnp_regenerate_css'); ?>
-            <input type="hidden" name="action" value="tnp_regenerate_css">
-            <?php submit_button(__('Regenerate CSS', 'tn-pallet'), 'secondary', 'submit', false); ?>
-        </form>
-
-        <script type="text/html" id="tmpl-tnp-palette-card">
-            <?php tnp_render_palette_row(array('name' => '', 'hex' => '#000000', 'rgb' => '0 0 0')); ?>
-        </script>
-    </div>
-    <?php
+    $ai_available = tnp_ai_available();
+    require TNP_PLUGIN_DIR . 'templates/palette.php';
 }
 
 function tnp_render_palette_row(array $colour): void
