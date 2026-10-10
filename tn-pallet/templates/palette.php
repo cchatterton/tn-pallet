@@ -5,15 +5,26 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <div class="wrap tnp-admin">
-    <h1 class="screen-reader-text"><?php esc_html_e('TN Pallet', 'tn-pallet'); ?></h1>
+    <h1 class="screen-reader-text"><?php esc_html_e('Pallet', 'tn-pallet'); ?></h1>
     <?php if ($notice) : ?>
         <div class="notice notice-<?php echo esc_attr($notice['type']); ?> is-dismissible"><p><?php echo esc_html($notice['message']); ?></p></div>
     <?php endif; ?>
     <div id="tnp-feedback" class="notice" role="status" aria-live="polite" tabindex="-1" hidden><p></p></div>
     <header class="tnp-hero">
-        <span class="tnp-eyebrow">Techn</span>
-        <h2><?php esc_html_e('TN Pallet', 'tn-pallet'); ?></h2>
-        <p><?php esc_html_e('One palette. Every part of your site.', 'tn-pallet'); ?></p>
+        <div class="tnp-hero-top">
+            <span class="tnp-eyebrow"><?php esc_html_e('Colour. Organise. Apply.', 'tn-pallet'); ?></span>
+            <span class="tnp-version"><span class="screen-reader-text"><?php esc_html_e('Version', 'tn-pallet'); ?> </span><?php echo esc_html('v' . TNP_VERSION); ?></span>
+        </div>
+        <h2><?php esc_html_e('Pallet', 'tn-pallet'); ?></h2>
+        <div class="tnp-hero-bottom">
+            <p><?php esc_html_e('One palette. Every part of your site.', 'tn-pallet'); ?></p>
+            <ul class="tnp-capabilities" aria-label="<?php esc_attr_e('Palette capabilities', 'tn-pallet'); ?>">
+                <li><?php esc_html_e('Grouped colours', 'tn-pallet'); ?></li>
+                <li><?php esc_html_e('JSON import / export', 'tn-pallet'); ?></li>
+                <li><?php esc_html_e('Generated CSS', 'tn-pallet'); ?></li>
+                <?php if ($ai_available) : ?><li><?php esc_html_e('AI image interpretation', 'tn-pallet'); ?></li><?php endif; ?>
+            </ul>
+        </div>
     </header>
     <noscript><div class="notice notice-warning"><p><?php esc_html_e('Enable JavaScript to edit the palette. Your saved colours remain active.', 'tn-pallet'); ?></p></div></noscript>
     <div class="nav-tab-wrapper" role="tablist" aria-label="<?php esc_attr_e('Palette tools', 'tn-pallet'); ?>">

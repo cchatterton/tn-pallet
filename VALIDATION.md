@@ -31,3 +31,7 @@ Published v0.2.0 ZIP matches the committed source and root ZIP byte-for-byte (SH
 On disposable WordPress 7.1.3 / PHP 7.4.30, the controller's explicit check displayed native 0.2.0 update metadata and View details. Its checksum-verified WordPress upgrader installed the published ZIP over official 0.1.14. Reloading confirmed preserved custom palette values and names, byte-identical CSS and flat JSON, unchanged editor preference and activation state. The new section editor's save preserved the same palette. Plugin-row/transient reads with the active controller performed zero update-metadata HTTP.
 
 Final automated results: 43 palette assertions and 15 AI assertions on each of PHP 7.4.30, 8.1.23 and 8.5.7, plus controller integration and syntax checks.
+
+## 0.2.1 header refinement
+
+Applied the revised Author Branded hero standard: Pallet short title, purpose-led eyebrow, runtime version and informational capability chips; no standalone author label. Screenshots reviewed at 1440×1000 and 390×844 with AI enabled; chips wrap without page overflow. Version has accessible text, chips use semantic list markup and do not add keyboard stops. The existing 43-assertion palette/controller suite passed on PHP 8.5.7, covering the connector-absent render. No data or workflow code changed. A full screen-reader audit was not performed.

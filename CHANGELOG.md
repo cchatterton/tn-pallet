@@ -2,6 +2,12 @@
 
 All notable changes to TN Pallet are recorded here.
 
+## 0.2.1 - 2026-10-10
+
+- Align the header with Content Planner and Persona26: Pallet title without the TN prefix, purpose-led eyebrow, installed version at the top right, and capability chips.
+- Remove the standalone author label from the hero; retain plugin author metadata. Show the AI chip only when image interpretation is available.
+- Keep the header responsive with wrapping chips and preserve all palette data and workflows.
+
 ## 0.2.0 - 2026-10-10
 
 - Split native Help into sections, CSS examples, class patterns, colour reference, JSON transfer and editor topics, with image help when available.

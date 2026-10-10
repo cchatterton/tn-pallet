@@ -15,8 +15,12 @@
     background: radial-gradient(circle at 88% 10%, rgba(18,92,138,.58), transparent 24rem), linear-gradient(125deg,#001d31,#063b5d);
 }
 .tnp-admin .tnp-hero h2 { color: #fff; font-size: 1.75rem; margin: .5rem 0; }
-.tnp-admin .tnp-hero p { margin: .5rem 0 0; }
-.tnp-admin .tnp-eyebrow { color: #ff6b00; font-weight: 700; letter-spacing: .08em; }
+.tnp-admin .tnp-hero p { margin: 0; }
+.tnp-admin .tnp-eyebrow { color: #ff6b00; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: .75rem; }
+.tnp-admin .tnp-hero-top, .tnp-admin .tnp-hero-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .75rem 1.5rem; }
+.tnp-admin .tnp-version { margin-left: auto; font-size: .75rem; color: #d5dfe5; white-space: nowrap; }
+.tnp-admin .tnp-capabilities { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.tnp-admin .tnp-capabilities li { margin: 0; padding: .375rem .75rem; border: .0625rem solid rgba(255,255,255,.3); border-radius: 2rem; background: rgba(255,255,255,.1); color: #fff; font-size: .75rem; font-weight: 600; }
 .tnp-admin .nav-tab-wrapper { display: flex; flex-wrap: wrap; gap: .25rem; }
 .tnp-admin .nav-tab { margin: 0; float: none; cursor: pointer; }
 .tnp-admin .nav-tab-active { border-bottom: .1875rem solid var(--tnp-orange); }

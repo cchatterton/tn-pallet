@@ -3,7 +3,7 @@ Contributors:
 Tags: techn
 Requires at least: 7.0
 Tested up to: 7.1.3
-Stable tag: 0.2.0
+Stable tag: 0.2.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -23,6 +23,12 @@ Manage a named colour palette and generated utility CSS from WordPress admin.
 5. Optionally configure an image-capable provider under Settings > Connectors to enable From image.
 
 == Changelog ==
+
+= 0.2.1 =
+* Align the header with Content Planner and Persona26: Pallet title without the TN prefix, purpose-led eyebrow, installed version at the top right, and capability chips.
+* Remove the standalone author label from the hero; retain plugin author metadata. Show the AI chip only when image interpretation is available.
+* Keep the header responsive with wrapping chips and preserve all palette data and workflows.
+
 
 = 0.2.0 =
 * Split native Help into sections, CSS examples, class patterns, colour reference, JSON transfer and editor topics, with image help when available.
